@@ -1,10 +1,13 @@
 package KG.Neobis.FMS.Services;
 
 import KG.Neobis.FMS.Entities.CashAccounts;
+import KG.Neobis.FMS.Exceptions.ResourceAlreadyExists;
 import KG.Neobis.FMS.Exceptions.ResourceNotFoundExceptions;
 import KG.Neobis.FMS.Repositories.CashAccountsRepository;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Service

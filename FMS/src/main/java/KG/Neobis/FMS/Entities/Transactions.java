@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ public class Transactions extends BaseEntityAudit {
     @JoinColumn(name = "from_cash_account",referencedColumnName = "id")
     private CashAccounts fromCashAccount;
 
+    @NotNull
     @ManyToOne
     @JoinColumn (name = "to_cash_account", referencedColumnName = "id")
     private CashAccounts toCashAccount;
@@ -59,5 +61,4 @@ public class Transactions extends BaseEntityAudit {
     private Set<TransactionTags> tags = new HashSet<>();
 
     private boolean deleted;
-
 }

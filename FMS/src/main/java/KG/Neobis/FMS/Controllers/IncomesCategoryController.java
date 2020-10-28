@@ -21,13 +21,13 @@ public class IncomesCategoryController {
         this.repository = repository;
     }
 
-    @GetMapping("/incomes_controller")
+    @GetMapping("/incomes_categories")
     @ApiOperation(value = "API for get all income categories")
     public List<CategoryForIncomes> getAll(){
         return repository.findAll();
     }
 
-    @PostMapping("/incomes_controller")
+    @PostMapping("/incomes_categories")
     @ApiOperation(value = "API for post income category")
     public CategoryForIncomes createIncome (@RequestBody CategoryForIncomes income){
         return repository.save(income);

@@ -6,13 +6,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityExistsException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @RestController
 @Api(value = "Cash accounts", description = "APIs for cash accounts")
 public class CashAccountController {
 
-    private CashAccountService service;
+    private final CashAccountService service;
 
     public CashAccountController(CashAccountService service) {
         this.service = service;

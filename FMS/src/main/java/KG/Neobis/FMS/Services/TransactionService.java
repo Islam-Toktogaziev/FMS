@@ -19,17 +19,20 @@ public class TransactionService {
     private final CashAccountService cashAccountService;
     private final ContractorsService contractorsService;
     private final IncomesCategoryService incomesCategoryService;
+    private final ExpensesCategoryService expensesCategoryService;
     private final TransactionTagsService transactionTagsService;
 
     public TransactionService(TransactionRepository transactionRepository,
                               CashAccountService cashAccountService,
                               ContractorsService contractorsService,
                               IncomesCategoryService incomesCategoryService,
+                              ExpensesCategoryService expensesCategoryService,
                               TransactionTagsService transactionTagsService) {
         this.transactionRepository = transactionRepository;
         this.cashAccountService = cashAccountService;
         this.contractorsService = contractorsService;
         this.incomesCategoryService = incomesCategoryService;
+        this.expensesCategoryService = expensesCategoryService;
         this.transactionTagsService = transactionTagsService;
     }
 
@@ -77,13 +80,14 @@ public class TransactionService {
         transactions.setSumOfTransaction(newTransaction.getSumOfTransaction());
         transactions.setDeleted(false);
         cashAccountService.changeAccountCash(newTransaction.getCashAccount(),new CashAccounts(transactions.getToCashAccount().getSumInAccount().add(transactions.getSumOfTransaction())));
-        Set<String> tagsInString = new HashSet<>(Arrays.asList(newTransaction.getTags().split(" ")));
-        Set<TransactionTags> newTags = new HashSet<>();
-        for (String tags: tagsInString)
-        {
-            newTags.add(transactionTagsService.getTagByName(tags));
+        if (newTransaction.getTags() != null) {
+            Set<String> tagsInString = new HashSet<>(Arrays.asList(newTransaction.getTags().split(" ")));
+            Set<TransactionTags> newTags = new HashSet<>();
+            for (String tags : tagsInString) {
+                newTags.add(transactionTagsService.getTagByName(tags));
+            }
+            transactions.setTags(newTags);
         }
-        transactions.setTags(newTags);
         transactionRepository.save(transactions);
     }
 
@@ -94,6 +98,29 @@ public class TransactionService {
                     return transactionRepository.save(transactions);
                 })
                 .orElseThrow(() -> new ResourceNotFoundExceptions("Не найдено транзакциия с таким ID"));
+    }
+
+    public void createExpenseTransaction(RequestTransaction newTransaction){
+        Transactions transactions = new Transactions();
+        transactions.setTypeOfTransaction(TypeOfTransaction.Расход);
+        transactions.setActual(newTransaction.isStatus());
+        transactions.setCategoryForExpenses(expensesCategoryService.getOneByName(newTransaction.getCategory()));
+        transactions.setActualDate(newTransaction.getActualDate());
+        transactions.setContractor(contractorsService.getContractorByName(newTransaction.getContractor()));
+        transactions.setFromCashAccount(cashAccountService.getOneAccountsByName(newTransaction.getCashAccount()));
+        transactions.setDescription(newTransaction.getDescription());
+        transactions.setSumOfTransaction(newTransaction.getSumOfTransaction());
+        transactions.setDeleted(false);
+        cashAccountService.changeAccountCash(newTransaction.getCashAccount(),new CashAccounts(transactions.getFromCashAccount().getSumInAccount().subtract(transactions.getSumOfTransaction())));
+        if (newTransaction.getTags() != null) {
+            Set<String> tagsInString = new HashSet<>(Arrays.asList(newTransaction.getTags().split(" ")));
+            Set<TransactionTags> newTags = new HashSet<>();
+            for (String tags : tagsInString) {
+                newTags.add(transactionTagsService.getTagByName(tags));
+            }
+            transactions.setTags(newTags);
+        }
+        transactionRepository.save(transactions);
     }
 
 }

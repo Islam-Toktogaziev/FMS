@@ -10,9 +10,9 @@ import java.math.BigDecimal;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transactions,Long> {
 
-    @Query(value = "select SUM(sum_of_transaction) from transactions where type_of_transaction = 'Доход'", nativeQuery = true)
+    @Query(value = "select SUM(sum_of_transaction) from transactions where type_of_transaction = 0", nativeQuery = true)
     BigDecimal getIncomesSum();
 
-    @Query(value = "select SUM(sum_of_transaction) from transactions where type_of_transaction = 'Расход'", nativeQuery = true)
+    @Query(value = "select SUM(sum_of_transaction) from transactions where type_of_transaction = 1", nativeQuery = true)
     BigDecimal getExpensesSum();
 }

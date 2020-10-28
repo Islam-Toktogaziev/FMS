@@ -33,9 +33,16 @@ public class TransactionController {
 
     @PostMapping("/income_transaction")
     @ApiOperation(value = "API for post income transaction")
-    public RequestTransaction createIncome(@RequestBody @Valid RequestTransaction requestTransaction){
+    public String createIncome( @RequestBody @Valid RequestTransaction requestTransaction){
         transactionService.createIncomeTransaction(requestTransaction);
-        return requestTransaction;
+        return "Транзакция успешно добавлена";
+    }
+
+    @PostMapping("/expense_transaction")
+    @ApiOperation(value = "API for post expense transaction")
+    public String createExpense( @RequestBody @Valid RequestTransaction requestTransaction){
+        transactionService.createExpenseTransaction(requestTransaction);
+        return "Транзакция успешно добавлена";
     }
 
     @PutMapping("/delete_transaction/{transactionID}")

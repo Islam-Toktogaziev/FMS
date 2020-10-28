@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface CashAccountsRepository extends JpaRepository<CashAccounts, Long> {
 
     Optional<CashAccounts> findByName (String name);
+    boolean existsByName(String name);
 }

@@ -1,10 +1,11 @@
 package KG.Neobis.FMS.Entities;
 
+import KG.Neobis.FMS.Enums.TypeOfTransaction;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -23,6 +24,8 @@ public class Transactions extends BaseEntityAudit {
 
     private BigDecimal sumOfTransaction;
     private boolean isActual;
+
+    @Enumerated
     private TypeOfTransaction typeOfTransaction;
 
     @ManyToOne
@@ -36,16 +39,16 @@ public class Transactions extends BaseEntityAudit {
 
     private String description;
 
-    @CreatedDate
+    @JsonFormat(pattern="dd-MM-yyyy")
     private Date actualDate;
 
     @ManyToOne (optional = true)
     @JoinColumn(name = "incomes_category", referencedColumnName = "id")
-    private CategoryForIncomes categoryForIncomes;
+    private IncomesCategories incomesCategories;
 
     @ManyToOne (optional = true)
     @JoinColumn(name = "expenses_category", referencedColumnName = "id")
-    private CategoryForExpenses categoryForExpenses;
+    private ExpensesCategories expensesCategories;
 
     @ManyToOne (optional = true)
     @JoinColumn(name = "contractor",referencedColumnName = "id")
@@ -59,6 +62,10 @@ public class Transactions extends BaseEntityAudit {
     )
     @Column(name = "tags")
     private Set<TransactionTags> tags = new HashSet<>();
+
+    @ManyToOne (optional = true)
+    @JoinColumn(name = "projects", referencedColumnName = "id")
+    private Projects projects;
 
     private boolean deleted;
 }

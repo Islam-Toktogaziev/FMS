@@ -4,6 +4,7 @@ import KG.Neobis.FMS.Services.TotalSumService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
@@ -28,5 +29,11 @@ public class TotalSumController {
     @GetMapping("/expenses")
     public BigDecimal getExpenses(){
         return totalSumService.getSumExpenses();
+    }
+
+    @ApiOperation(value = "API for get total sum in Cash accounts")
+    @GetMapping("/sum_in_cash_accounts")
+    public BigDecimal getSumInCashAccounts(){
+        return totalSumService.getSumInCashAccounts();
     }
 }

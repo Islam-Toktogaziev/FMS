@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Entity
 @SequenceGenerator(name = "SEQ_ID", sequenceName = "SEQ_ACCOUNTS", allocationSize = 1)
-public class CashAccounts extends BaseEntity {
+public class CashAccounts extends BaseEntityAudit {
 
     @Column(unique = true)
     private String name;

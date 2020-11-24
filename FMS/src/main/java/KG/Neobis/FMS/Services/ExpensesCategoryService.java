@@ -1,8 +1,10 @@
 package KG.Neobis.FMS.Services;
 
-import KG.Neobis.FMS.Entities.CategoryForExpenses;
+import KG.Neobis.FMS.Entities.ExpensesCategories;
+import KG.Neobis.FMS.Enums.ResultCode;
 import KG.Neobis.FMS.Exceptions.ResourceNotFoundExceptions;
 import KG.Neobis.FMS.Repositories.ExpensesCategoryRepository;
+import KG.Neobis.FMS.dto.ResponseMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,28 +18,30 @@ public class ExpensesCategoryService {
         this.expensesCategoryRepository = expensesCategoryRepository;
     }
 
-    public List<CategoryForExpenses> getAllExpenseCategories(){
+    public List<ExpensesCategories> getAllExpenseCategories(){
         return expensesCategoryRepository.findAll();
     }
 
-    public CategoryForExpenses getOneByID(Long expensesCategoryID){
+    public ExpensesCategories getOneByID(Long expensesCategoryID){
         return expensesCategoryRepository.findById(expensesCategoryID)
-                .orElseThrow(() -> new ResourceNotFoundExceptions("Такой категории для расходов не найдено"));
+                .orElseThrow(() -> new ResourceNotFoundExceptions(new ResponseMessage(ResultCode.EXCEPTION,"Такой категории для расходов не найдено")));
     }
 
-    public CategoryForExpenses getOneByName (String categoryName){
+    public ExpensesCategories createExpensesCategory (ExpensesCategories newCategory){
+        return expensesCategoryRepository.save(newCategory);
+    }
+
+    public ExpensesCategories getOneByName (String categoryName){
         return expensesCategoryRepository.findByCategoryName(categoryName)
-                .orElseGet(() -> {
-                    return expensesCategoryRepository.save(new CategoryForExpenses(categoryName));
-                });
+                .orElseThrow(() -> new ResourceNotFoundExceptions(new ResponseMessage(ResultCode.EXCEPTION,"Такой категории для расходов не найдено")));
     }
 
-    public CategoryForExpenses changeNameCategory (CategoryForExpenses newCategory, Long categoryID){
+    public ExpensesCategories changeNameCategory (ExpensesCategories newCategory, Long categoryID){
         return expensesCategoryRepository.findById(categoryID)
                 .map(category -> {
                     category.setCategoryName(newCategory.getCategoryName());
                     return expensesCategoryRepository.save(category);
                 })
-                .orElseThrow(() -> new ResourceNotFoundExceptions("Такой категории для доходов не найдено"));
+                .orElseThrow(() -> new ResourceNotFoundExceptions(new ResponseMessage(ResultCode.EXCEPTION,"Такой категории для расходов не найдено")));
     }
 }

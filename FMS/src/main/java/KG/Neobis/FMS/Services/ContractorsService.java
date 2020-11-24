@@ -1,8 +1,10 @@
 package KG.Neobis.FMS.Services;
 
 import KG.Neobis.FMS.Entities.Contractors;
+import KG.Neobis.FMS.Enums.ResultCode;
 import KG.Neobis.FMS.Exceptions.ResourceNotFoundExceptions;
 import KG.Neobis.FMS.Repositories.ContractorsRepository;
+import KG.Neobis.FMS.dto.ResponseMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,14 +24,17 @@ public class ContractorsService {
 
     public Contractors getContractorByID(Long contractorID){
         return contractorsRepository.findById(contractorID)
-                .orElseThrow(() -> new ResourceNotFoundExceptions(" Не найден контрагент с таким ID"));
+                .orElseThrow(() -> new ResourceNotFoundExceptions(new ResponseMessage(ResultCode.EXCEPTION," Не найден контрагент с таким ID")));
     }
 
     public Contractors getContractorByName(String name){
         return contractorsRepository.findByName(name)
-                .orElseGet(() ->{
-                    return contractorsRepository.save(new Contractors(name));
-                });
+                .orElseThrow(() -> new ResourceNotFoundExceptions(new ResponseMessage(ResultCode.EXCEPTION," Не найден контрагент с таким именем")));
+    }
+
+    public Contractors getContractorIDByName(String name){
+        return contractorsRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundExceptions(new ResponseMessage(ResultCode.EXCEPTION," Не найден контрагент с таким именем")));
     }
 
     public Contractors createNewContractor (Contractors contractor){
@@ -42,6 +47,6 @@ public class ContractorsService {
                     contractors.setName(newContractor.getName());
                     return contractorsRepository.save(contractors);
                 })
-                .orElseThrow(() -> new ResourceNotFoundExceptions(" Не найден контрагент с таким ID"));
+                .orElseThrow(() -> new ResourceNotFoundExceptions(new ResponseMessage(ResultCode.EXCEPTION," Не найден контрагент с таким ID")));
     }
 }

@@ -1,7 +1,9 @@
 package KG.Neobis.FMS.Controllers;
 
 import KG.Neobis.FMS.Entities.Contractors;
+import KG.Neobis.FMS.Enums.ResultCode;
 import KG.Neobis.FMS.Services.ContractorsService;
+import KG.Neobis.FMS.dto.ResponseMessage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +28,15 @@ public class ContractorController {
 
     @PostMapping("/contractors")
     @ApiOperation(value = "API for post contractor")
-    public Contractors createContractor (@RequestBody Contractors contractor){
-        return service.createNewContractor(contractor);
+    public ResponseMessage createContractor (@RequestBody Contractors contractor){
+        service.createNewContractor(contractor);
+        return new ResponseMessage(ResultCode.SUCCESS," Контрагент успешно добавлен");
     }
 
     @PutMapping("/contractors/{contractorID}")
     @ApiOperation(value = "API for change contractor's name")
-    public Contractors changeName (@RequestBody Contractors contractors, @PathVariable Long contractorID){
-        return service.updateContractor(contractors,contractorID);
+    public ResponseMessage changeName (@RequestBody Contractors contractors, @PathVariable Long contractorID){
+        service.updateContractor(contractors,contractorID);
+        return new ResponseMessage(ResultCode.SUCCESS,"Имя контрагента успешно изменена");
     }
 }

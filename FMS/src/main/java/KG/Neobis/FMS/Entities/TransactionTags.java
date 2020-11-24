@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @SequenceGenerator(name = "SEQ_ID", sequenceName = "SEQ_TAGS", allocationSize = 1)
-public class TransactionTags extends BaseEntity {
+public class TransactionTags extends BaseEntityAudit {
 
     private String name;
 

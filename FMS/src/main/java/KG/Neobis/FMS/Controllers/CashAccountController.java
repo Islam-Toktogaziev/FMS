@@ -1,13 +1,13 @@
 package KG.Neobis.FMS.Controllers;
 
 import KG.Neobis.FMS.Entities.CashAccounts;
+import KG.Neobis.FMS.Enums.ResultCode;
 import KG.Neobis.FMS.Services.CashAccountService;
+import KG.Neobis.FMS.dto.ResponseMessage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityExistsException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @RestController
@@ -34,7 +34,24 @@ public class CashAccountController {
 
     @PostMapping("/cash_accounts")
     @ApiOperation(value = "API for post cash account")
-    public CashAccounts createAccounts (@RequestBody CashAccounts cashAccounts){
-        return service.createAccount(cashAccounts);
+    public ResponseMessage createAccounts (@RequestBody CashAccounts cashAccounts){
+        service.createAccount(cashAccounts);
+        return new ResponseMessage(ResultCode.SUCCESS,"Счет успешно создан");
+    }
+
+    @PutMapping("/cash_accounts/{accountID}/name")
+    @ApiOperation(value = "API for change cash account name by ID")
+    public ResponseMessage changeName (@PathVariable Long accountID,
+                                       @RequestBody CashAccounts cashAccounts){
+        service.changeAccountNameByID(accountID,cashAccounts);
+        return new ResponseMessage(ResultCode.SUCCESS,"Имя счета изменено");
+    }
+
+    @PutMapping("/cash_accounts/{accountID}/cash")
+    @ApiOperation(value = "API for change cash in account by ID")
+    public ResponseMessage changeCash (@PathVariable Long accountID,
+                                       @RequestBody CashAccounts cashAccounts){
+        service.changeAccountCashByID(accountID,cashAccounts);
+        return new ResponseMessage(ResultCode.SUCCESS,"Сумма на счету изменено");
     }
 }

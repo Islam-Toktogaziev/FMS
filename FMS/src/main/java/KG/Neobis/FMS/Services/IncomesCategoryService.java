@@ -1,8 +1,10 @@
 package KG.Neobis.FMS.Services;
 
-import KG.Neobis.FMS.Entities.CategoryForIncomes;
+import KG.Neobis.FMS.Entities.IncomesCategories;
+import KG.Neobis.FMS.Enums.ResultCode;
 import KG.Neobis.FMS.Exceptions.ResourceNotFoundExceptions;
 import KG.Neobis.FMS.Repositories.IncomesCategoryRepository;
+import KG.Neobis.FMS.dto.ResponseMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,28 +18,30 @@ public class IncomesCategoryService {
         this.repository = repository;
     }
 
-    public List<CategoryForIncomes> getAllIncomeCategories(){
+    public List<IncomesCategories> getAllIncomeCategories(){
         return repository.findAll();
     }
 
-    public CategoryForIncomes getOneByID(Long incomesCategoryID){
+    public IncomesCategories getOneByID(Long incomesCategoryID){
         return repository.findById(incomesCategoryID)
-                .orElseThrow(() -> new ResourceNotFoundExceptions("Такой категории для доходов не найдено"));
+                .orElseThrow(() -> new ResourceNotFoundExceptions(new ResponseMessage(ResultCode.EXCEPTION,"Такой категории для доходов не найдено")));
     }
 
-    public CategoryForIncomes getOneByName (String categoryName){
+    public IncomesCategories createIncomesCategory (IncomesCategories newCategory){
+        return repository.save(newCategory);
+    }
+
+    public IncomesCategories getOneByName (String categoryName){
         return repository.findByCategoryName(categoryName)
-                .orElseGet(() -> {
-                    return repository.save(new CategoryForIncomes(categoryName));
-                });
+                .orElseThrow(() -> new ResourceNotFoundExceptions(new ResponseMessage(ResultCode.EXCEPTION,"Такой категории для доходов не найдено")));
     }
 
-    public CategoryForIncomes changeNameCategory (CategoryForIncomes newCategory, Long categoryID){
+    public IncomesCategories changeNameCategory (IncomesCategories newCategory, Long categoryID){
         return repository.findById(categoryID)
                 .map(category -> {
                     category.setCategoryName(newCategory.getCategoryName());
                     return repository.save(category);
                 })
-                .orElseThrow(() -> new ResourceNotFoundExceptions("Такой категории для доходов не найдено"));
+                .orElseThrow(() -> new ResourceNotFoundExceptions(new ResponseMessage(ResultCode.EXCEPTION,"Такой категории для доходов не найдено")));
     }
 }

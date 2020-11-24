@@ -15,7 +15,7 @@ import javax.persistence.SequenceGenerator;
 @AllArgsConstructor
 @Entity
 @SequenceGenerator(name = "SEQ_ID", sequenceName = "SEQ_CONTRACTORS", allocationSize = 1)
-public class Contractors extends BaseEntity {
+public class Contractors extends BaseEntityAudit {
 
     private String name;
 }

@@ -1,8 +1,10 @@
 package KG.Neobis.FMS.Services;
 
 import KG.Neobis.FMS.Entities.TransactionTags;
+import KG.Neobis.FMS.Enums.ResultCode;
 import KG.Neobis.FMS.Exceptions.ResourceNotFoundExceptions;
 import KG.Neobis.FMS.Repositories.TagsRepository;
+import KG.Neobis.FMS.dto.ResponseMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +24,7 @@ public class TransactionTagsService {
 
     public TransactionTags getTagByID(Long tagID){
         return tagsRepository.findById(tagID)
-                .orElseThrow(() -> new ResourceNotFoundExceptions(" Не найден тэг с таким ID"));
+                .orElseThrow(() -> new ResourceNotFoundExceptions(new ResponseMessage(ResultCode.EXCEPTION," Не найден тэг с таким ID")));
     }
 
     public TransactionTags getTagByName(String name){
@@ -42,6 +44,6 @@ public class TransactionTagsService {
                     tags.setName(newTag.getName());
                     return tagsRepository.save(tags);
                 })
-                .orElseThrow(() -> new ResourceNotFoundExceptions(" Не найден тэг с таким ID"));
+                .orElseThrow(() -> new ResourceNotFoundExceptions(new ResponseMessage(ResultCode.EXCEPTION," Не найден тэг с таким ID")));
     }
 }

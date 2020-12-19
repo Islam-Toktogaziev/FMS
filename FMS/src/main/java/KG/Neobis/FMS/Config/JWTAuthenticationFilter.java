@@ -32,7 +32,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             System.out.println("req login = [" + req + "], res = [" + res + "]");
             AppUsers creds = new ObjectMapper()
                     .readValue(req.getInputStream(), AppUsers.class);
-            // passser le mot de passe au UserDetailsService pour recuperer l'utilisateur s'il existe
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             creds.getEmail(),

@@ -10,10 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -32,6 +29,8 @@ public class AppUsers extends BaseEntityAudit implements UserDetails {
 
     private String number;
     private String recoveryCode;
+
+    private Date expRecover;
 
     public AppUsers(String username, String password, @Email String email, Collection<Roles> roles) {
         this.username = username;

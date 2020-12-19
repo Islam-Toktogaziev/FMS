@@ -66,6 +66,4 @@ public class Transactions extends BaseEntityAudit {
     @ManyToOne (optional = true)
     @JoinColumn(name = "projects", referencedColumnName = "id")
     private Projects projects;
-
-    private boolean deleted;
 }

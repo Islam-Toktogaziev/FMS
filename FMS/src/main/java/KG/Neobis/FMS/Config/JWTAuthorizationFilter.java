@@ -61,7 +61,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                 for (String s : privileges) {
                     privilegeCollections.add(new Privilege(s));
                 }
-                System.out.println("request = [" + privilegeCollections + "]");
+                System.out.println("request = [" + privilegeCollections.toString() + "]");
                 return new UsernamePasswordAuthenticationToken(user, null, privilegeCollections);
             } catch (AlgorithmMismatchException e) {
                 logger.error("Algorithm Mismatch Exception", e);

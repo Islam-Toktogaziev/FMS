@@ -8,11 +8,14 @@ import KG.Neobis.FMS.Services.UserService;
 import KG.Neobis.FMS.dto.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT,RequestMethod.OPTIONS})
 @RestController
 @Api("APIs for add/get users")
 public class UserController {
@@ -38,9 +41,9 @@ public class UserController {
         throw new ResourceNotFoundExceptions(new ResponseMessage(ResultCode.EXCEPTION,"Не найден пользователь с таким Email"));
     }
 
-    @GetMapping("/recover/{email}")
+    @GetMapping("/recovery/{email}")
     @ApiOperation("API for send to email about password reset")
-    public ResponseMessage sendRecoveryCode(@PathVariable("email") String email) throws Exception{
+    public ResponseMessage sendRecoveryCode(@PathVariable("email") String email) throws java.lang.Exception {
         userService.sendRecoveryCode(email);
         return new ResponseMessage(ResultCode.SUCCESS,"Код сброса отправлена на почту");
     }
@@ -53,31 +56,35 @@ public class UserController {
         return new ResponseMessage(ResultCode.SUCCESS,"Пароль успешно изменен");
     }
 
+    @PreAuthorize("hasAuthority('АДМИН')")
     @GetMapping("/admin/users")
     @ApiOperation("API User's list for ADMIN")
     public List<AppUsers> getAll(){
         return userService.getAllUsers();
     }
 
+    @PreAuthorize("hasAuthority('АДМИН')")
     @GetMapping("/admin/users/{username}")
     @ApiOperation("API for get User data for ADMIN")
     public AppUsers getOneByUserNameForAdmin(@PathVariable String username){
         return userService.getByUserName(username);
     }
 
-    @GetMapping("/users/{username}")
+    @GetMapping("/users/me")
     @ApiOperation("API for get own user data")
-    public AppUsers getOwnUserPage (@PathVariable String username){
-        return userService.getByUserName(username);
+    public UserProfile getOwnUserPage (Authentication authentication){
+        AppUsers users = userService.getByEmail(authentication.getPrincipal().toString());
+        return new UserProfile(users.getUsername(), users.getEmail(), users.getNumber());
     }
 
-    @PutMapping("/users/{username}/change-password")
+    @PutMapping("/users/me/change-password")
     @ApiOperation("API for change password")
-    public ResponseMessage changePassword (@PathVariable String username, @RequestBody RequestChangePassword password){
-        userService.changePassword(username,password);
+    public ResponseMessage changePassword (Authentication authentication, @RequestBody RequestChangePassword password){
+        userService.changePassword(authentication,password);
         return new ResponseMessage(ResultCode.SUCCESS, "Пароль успешно изменен!");
     }
 
+    @PreAuthorize("hasAuthority('АДМИН')")
     @PostMapping("/admin/users")
     @ApiOperation("API for create new user")
     public ResponseMessage createUser (@RequestBody CreateUserRequest user) throws Exception {
@@ -92,6 +99,7 @@ public class UserController {
         return new ResponseMessage(ResultCode.SUCCESS, "Данные успешно сохранены");
     }
 
+    @PreAuthorize("hasAuthority('АДМИН')")
     @PutMapping("/admin/users/{username}")
     @ApiOperation("API for change user roles")
     public ResponseMessage changeUserRoles (@RequestBody AppUsers newUser, @PathVariable String username){

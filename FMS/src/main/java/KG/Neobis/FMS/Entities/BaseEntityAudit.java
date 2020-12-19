@@ -1,19 +1,32 @@
 package KG.Neobis.FMS.Entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntityAudit extends BaseEntity implements Serializable {
 
+    @CreatedBy
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String createdBy;
+
+    @LastModifiedBy
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String updatedBy;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 

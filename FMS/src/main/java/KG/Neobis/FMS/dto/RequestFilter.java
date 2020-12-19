@@ -23,6 +23,8 @@ public class RequestFilter {
 
     private String typeOfTransaction;
 
+    private String project;
+
     private BigInteger pageNumber;
 
     private BigInteger transactionsInPage;

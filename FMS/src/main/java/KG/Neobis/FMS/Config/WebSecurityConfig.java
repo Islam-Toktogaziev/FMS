@@ -14,16 +14,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final BCryptPasswordEncoder myBCryptPasswordEncoder;
@@ -40,6 +40,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .cors()
+                .and()
                 .csrf().disable()
                 .authorizeRequests()
 
@@ -47,24 +49,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
                 .antMatchers("/admin/**").hasAuthority("АДМИН")
 
                 .antMatchers("/resources/**").permitAll()
-                .antMatchers(HttpMethod.GET,"/cash_accounts/**").authenticated()
-                .antMatchers(HttpMethod.POST,"/cash_accounts").hasAuthority("Добавление_счета")
-                .antMatchers(HttpMethod.PUT,"/cash_accounts/**").hasAuthority("Изменение_данных_счета")
-                .antMatchers(HttpMethod.GET, "/transactions/**").authenticated()
-                .antMatchers(HttpMethod.POST, "/income_transactions").hasAuthority("Добавление_транзакции")
-                .antMatchers(HttpMethod.POST, "/expense_transactions").hasAuthority("Добавление_транзакции")
-                .antMatchers(HttpMethod.POST, "/transfer_transactions").hasAuthority("Добавление_транзакции")
-                .antMatchers(HttpMethod.DELETE, "/delete_transaction/**").hasAuthority("Удаление_транзакции")
-                .antMatchers(HttpMethod.POST, "/contractors").hasAuthority("Добавление/изменение_контрагентов")
-                .antMatchers(HttpMethod.PUT, "/contractors/**").hasAuthority("Добавление/изменение_контрагентов")
-                .antMatchers(HttpMethod.POST,"/expenses_categories").hasAuthority("Добавление/изменение_категории")
-                .antMatchers(HttpMethod.PUT,"/expenses_categories/**").hasAuthority("Добавление/изменение_категории")
-                .antMatchers(HttpMethod.POST,"/incomes_categories").hasAuthority("Добавление/изменение_категории")
-                .antMatchers(HttpMethod.PUT,"/incomes_categories/**").hasAuthority("Добавление/изменение_категории")
-                .antMatchers(HttpMethod.POST,"/projects/**").hasAuthority("Добавление/изменение_проектов")
-                .antMatchers(HttpMethod.PUT,"/projects/**").hasAuthority("Добавление/изменение_проектов")
-                .antMatchers(HttpMethod.POST, "/login").permitAll()
-
+                .antMatchers("/login").permitAll()
+                .antMatchers(HttpMethod.OPTIONS,"**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS,"/admin/**").permitAll()
+                .antMatchers("/recovery/**").permitAll()
+                .antMatchers("/transactions/export").permitAll()
                 .anyRequest().authenticated()
 
                 .and()
@@ -102,21 +91,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
     }
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedMethods("*");
-    }
-
-    @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(myBCryptPasswordEncoder);
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.applyPermitDefaultValues();
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 }
